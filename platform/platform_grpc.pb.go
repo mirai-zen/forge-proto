@@ -4,7 +4,7 @@
 // - protoc             (unknown)
 // source: platform/platform.proto
 
-package gen
+package platform
 
 import (
 	context "context"
