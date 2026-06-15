@@ -1482,7 +1482,7 @@ const file_platform_platform_proto_rawDesc = "" +
 	"GetService\x12\x1a.platform.v1.GetServiceReq\x1a\x1b.platform.v1.GetServiceResp\x12N\n" +
 	"\rDeployService\x12\x1d.platform.v1.DeployServiceReq\x1a\x1e.platform.v1.DeployServiceResp\x12K\n" +
 	"\fGetEnvStatus\x12\x1c.platform.v1.GetEnvStatusReq\x1a\x1d.platform.v1.GetEnvStatusResp\x12N\n" +
-	"\rListTemplates\x12\x1d.platform.v1.ListTemplatesReq\x1a\x1e.platform.v1.ListTemplatesRespB:Z8github.com/mirai-zen/forge-proto/platform/gen;platformv1b\x06proto3"
+	"\rListTemplates\x12\x1d.platform.v1.ListTemplatesReq\x1a\x1e.platform.v1.ListTemplatesRespB+Z)github.com/mirai-zen/forge-proto/platformb\x06proto3"
 
 var (
 	file_platform_platform_proto_rawDescOnce sync.Once

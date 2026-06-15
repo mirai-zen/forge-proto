@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package platform.v1;
 
-option go_package = "github.com/mirai-zen/forge-proto/platform/gen;platformv1";
+option go_package = "github.com/mirai-zen/forge-proto/platform";
 
 // ============================================================
 // Platform Service — IDP 核心服务
