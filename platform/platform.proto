@@ -1,0 +1,198 @@
+syntax = "proto3";
+
+package platform.v1;
+
+option go_package = "github.com/mirai-zen/forge-proto/platform/gen;platformv1";
+
+// ============================================================
+// Platform Service — IDP 核心服务
+// 负责：项目管理 + 服务模板生成 + 多环境部署
+// ============================================================
+
+service Platform {
+    // ---- 项目管理 ----
+    rpc CreateProject(CreateProjectReq)  returns (CreateProjectResp);
+    rpc ListProjects(ListProjectsReq)    returns (ListProjectsResp);
+    rpc GetProject(GetProjectReq)        returns (GetProjectResp);
+
+    // ---- 服务管理 ----
+    rpc CreateService(CreateServiceReq)  returns (CreateServiceResp);
+    rpc GetService(GetServiceReq)        returns (GetServiceResp);
+
+    // ---- 部署管理 ----
+    rpc DeployService(DeployServiceReq)  returns (DeployServiceResp);
+    rpc GetEnvStatus(GetEnvStatusReq)    returns (GetEnvStatusResp);
+
+    // ---- 模板 ----
+    rpc ListTemplates(ListTemplatesReq)  returns (ListTemplatesResp);
+}
+
+// ============================================================
+// 1. 创建项目
+// ============================================================
+
+message CreateProjectReq {
+    string name        = 1;  // 项目名，同时作为 GitHub 仓库名
+    string git_org     = 2;  // GitHub Organization，如 mirai-zen
+    string template    = 3;  // 项目模板名，如 "default"
+    string description = 4;  // 项目描述
+}
+
+message CreateProjectResp {
+    uint64 id        = 1;  // 项目 ID
+    string repo_url  = 2;  // GitHub 仓库地址
+    string message   = 3;
+}
+
+// ============================================================
+// 2. 项目列表
+// ============================================================
+
+message ListProjectsReq {
+    int32  page      = 1;  // 页码，从 1 开始
+    int32  page_size = 2;  // 每页数量
+    string keyword   = 3;  // 搜索关键词（匹配项目名）
+}
+
+message ProjectInfo {
+    uint64 id          = 1;
+    string name        = 2;
+    string git_org     = 3;
+    string git_repo    = 4;
+    string template    = 5;
+    int32  service_count = 6;  // 该项目下的服务数量
+    string created_at  = 7;
+}
+
+message ListProjectsResp {
+    repeated ProjectInfo projects = 1;
+    int32   total                 = 2;
+}
+
+// ============================================================
+// 3. 项目详情
+// ============================================================
+
+message GetProjectReq {
+    uint64 id = 1;
+}
+
+message ServiceBrief {
+    uint64 id     = 1;
+    string name   = 2;
+    string template = 3;
+    // 三个环境的状态概览（实时查 ArgoCD/K8s）
+    string dev_status     = 4;  // pending / healthy / degraded / unknown
+    string staging_status = 5;
+    string prod_status    = 6;
+}
+
+message GetProjectResp {
+    uint64 id                = 1;
+    string name              = 2;
+    string git_org           = 3;
+    string git_repo          = 4;
+    string template          = 5;
+    string created_at        = 6;
+    repeated ServiceBrief services = 7;
+}
+
+// ============================================================
+// 4. 创建服务
+// ============================================================
+
+message CreateServiceReq {
+    uint64 project_id = 1;  // 所属项目 ID
+    string name       = 2;  // 服务名，如 "user-service"
+    string template   = 3;  // 模板名，如 "go-zero-service"
+    string params     = 4;  // 模板参数 JSON，如 {"port":8080,"db":"mysql"}
+}
+
+message CreateServiceResp {
+    uint64 id       = 1;  // 服务 ID
+    string pr_url   = 2;  // GitHub Pull Request 链接
+    string message  = 3;
+}
+
+// ============================================================
+// 5. 服务详情
+// ============================================================
+
+message GetServiceReq {
+    uint64 id = 1;
+}
+
+message EnvStatus {
+    string env             = 1;  // dev / staging / prod
+    string namespace       = 2;  // K8s namespace
+    string status          = 3;  // healthy / degraded / progressing / unknown
+    string current_branch  = 4;  // 当前部署的分支
+    string current_version = 5;  // 当前版本（commit sha）
+    string last_deploy_at  = 6;  // 最后部署时间
+    string sync_status     = 7;  // ArgoCD sync: Synced / OutOfSync
+}
+
+message GetServiceResp {
+    uint64 id                = 1;
+    string name              = 2;
+    uint64 project_id        = 3;
+    string template          = 4;
+    string params_json       = 5;
+    string created_at        = 6;
+    repeated EnvStatus envs  = 7;  // 三个环境的实时状态
+}
+
+// ============================================================
+// 6. 新建部署
+// ============================================================
+
+message DeployServiceReq {
+    uint64 service_id = 1;  // 服务 ID
+    string env        = 2;  // dev / staging / prod
+    string branch     = 3;  // 要部署的分支
+}
+
+message DeployServiceResp {
+    string workflow_url = 1;  // GitHub Actions 运行链接
+    string message      = 2;
+}
+
+// ============================================================
+// 7. 查询环境状态（实时）
+// ============================================================
+
+message GetEnvStatusReq {
+    uint64 service_id = 1;
+    string env        = 2;  // dev / staging / prod
+}
+
+message GetEnvStatusResp {
+    string env             = 1;
+    string namespace       = 2;
+    string status          = 3;  // healthy / degraded / progressing / unknown
+    string current_branch  = 4;
+    string current_version = 5;
+    string last_deploy_at  = 6;
+    string sync_status     = 7;  // ArgoCD sync status
+    string replicas        = 8;  // 当前副本数
+    string image           = 9;  // 当前镜像
+}
+
+// ============================================================
+// 8. 模板列表
+// ============================================================
+
+message ListTemplatesReq {
+    string type = 1;  // "project" / "service" / 空=全部
+}
+
+message TemplateInfo {
+    string name        = 1;  // 模板名
+    string type        = 2;  // project / service
+    string description = 3;
+    string language    = 4;  // go / vue / ...
+}
+
+message ListTemplatesResp {
+    repeated TemplateInfo templates = 1;
+}
