@@ -406,6 +406,8 @@ type ServiceBrief struct {
 	DevStatus     string `protobuf:"bytes,4,opt,name=dev_status,json=devStatus,proto3" json:"dev_status,omitempty"` // pending / healthy / degraded / unknown
 	StagingStatus string `protobuf:"bytes,5,opt,name=staging_status,json=stagingStatus,proto3" json:"staging_status,omitempty"`
 	ProdStatus    string `protobuf:"bytes,6,opt,name=prod_status,json=prodStatus,proto3" json:"prod_status,omitempty"`
+	Description   string `protobuf:"bytes,7,opt,name=description,proto3" json:"description,omitempty"` // 服务描述
+	Creator       string `protobuf:"bytes,8,opt,name=creator,proto3" json:"creator,omitempty"`         // 创建人
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -478,6 +480,20 @@ func (x *ServiceBrief) GetStagingStatus() string {
 func (x *ServiceBrief) GetProdStatus() string {
 	if x != nil {
 		return x.ProdStatus
+	}
+	return ""
+}
+
+func (x *ServiceBrief) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *ServiceBrief) GetCreator() string {
+	if x != nil {
+		return x.Creator
 	}
 	return ""
 }
@@ -580,6 +596,8 @@ type CreateServiceReq struct {
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`                             // 服务名，如 "user-service"
 	Template      string                 `protobuf:"bytes,3,opt,name=template,proto3" json:"template,omitempty"`                     // 模板名，如 "go-zero-service"
 	Params        string                 `protobuf:"bytes,4,opt,name=params,proto3" json:"params,omitempty"`                         // 模板参数 JSON，如 {"port":8080,"db":"mysql"}
+	Description   string                 `protobuf:"bytes,5,opt,name=description,proto3" json:"description,omitempty"`               // 服务描述
+	Creator       string                 `protobuf:"bytes,6,opt,name=creator,proto3" json:"creator,omitempty"`                       // 创建人
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -638,6 +656,20 @@ func (x *CreateServiceReq) GetTemplate() string {
 func (x *CreateServiceReq) GetParams() string {
 	if x != nil {
 		return x.Params
+	}
+	return ""
+}
+
+func (x *CreateServiceReq) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *CreateServiceReq) GetCreator() string {
+	if x != nil {
+		return x.Creator
 	}
 	return ""
 }
@@ -1389,7 +1421,7 @@ const file_platform_platform_proto_rawDesc = "" +
 	"\bprojects\x18\x01 \x03(\v2\x18.platform.v1.ProjectInfoR\bprojects\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x05R\x05total\"\x1f\n" +
 	"\rGetProjectReq\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\"\xb5\x01\n" +
+	"\x02id\x18\x01 \x01(\x04R\x02id\"\xf1\x01\n" +
 	"\fServiceBrief\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x04R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x1a\n" +
@@ -1398,7 +1430,9 @@ const file_platform_platform_proto_rawDesc = "" +
 	"dev_status\x18\x04 \x01(\tR\tdevStatus\x12%\n" +
 	"\x0estaging_status\x18\x05 \x01(\tR\rstagingStatus\x12\x1f\n" +
 	"\vprod_status\x18\x06 \x01(\tR\n" +
-	"prodStatus\"\xda\x01\n" +
+	"prodStatus\x12 \n" +
+	"\vdescription\x18\a \x01(\tR\vdescription\x12\x18\n" +
+	"\acreator\x18\b \x01(\tR\acreator\"\xda\x01\n" +
 	"\x0eGetProjectResp\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x04R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x17\n" +
@@ -1407,13 +1441,15 @@ const file_platform_platform_proto_rawDesc = "" +
 	"\btemplate\x18\x05 \x01(\tR\btemplate\x12\x1d\n" +
 	"\n" +
 	"created_at\x18\x06 \x01(\tR\tcreatedAt\x125\n" +
-	"\bservices\x18\a \x03(\v2\x19.platform.v1.ServiceBriefR\bservices\"y\n" +
+	"\bservices\x18\a \x03(\v2\x19.platform.v1.ServiceBriefR\bservices\"\xb5\x01\n" +
 	"\x10CreateServiceReq\x12\x1d\n" +
 	"\n" +
 	"project_id\x18\x01 \x01(\x04R\tprojectId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x1a\n" +
 	"\btemplate\x18\x03 \x01(\tR\btemplate\x12\x16\n" +
-	"\x06params\x18\x04 \x01(\tR\x06params\"T\n" +
+	"\x06params\x18\x04 \x01(\tR\x06params\x12 \n" +
+	"\vdescription\x18\x05 \x01(\tR\vdescription\x12\x18\n" +
+	"\acreator\x18\x06 \x01(\tR\acreator\"T\n" +
 	"\x11CreateServiceResp\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x04R\x02id\x12\x15\n" +
 	"\x06pr_url\x18\x02 \x01(\tR\x05prUrl\x12\x18\n" +

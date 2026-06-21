@@ -85,6 +85,8 @@ message ServiceBrief {
     string dev_status     = 4;  // pending / healthy / degraded / unknown
     string staging_status = 5;
     string prod_status    = 6;
+    string description    = 7;  // 服务描述
+    string creator        = 8;  // 创建人
 }
 
 message GetProjectResp {
@@ -106,6 +108,8 @@ message CreateServiceReq {
     string name       = 2;  // 服务名，如 "user-service"
     string template   = 3;  // 模板名，如 "go-zero-service"
     string params     = 4;  // 模板参数 JSON，如 {"port":8080,"db":"mysql"}
+    string description = 5; // 服务描述
+    string creator     = 6; // 创建人
 }
 
 message CreateServiceResp {
